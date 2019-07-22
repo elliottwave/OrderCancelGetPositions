@@ -1,4 +1,4 @@
- Welcome to Cryzen.
+# Welcome to Cryzen.
 # This file is a minimal example to get you started.
 # If you have any questions, you can always ask us on Telegram: t.me/cryzen 
 # Or check out Catalyst's documentation: https://enigma.co/catalyst/
@@ -9,7 +9,7 @@
 import pandas as pd
 import numpy as np
 from cryzen import plot, param
-from catalyst.api # import order, get_open_orders, cancel_order
+from catalyst.api import order, get_open_orders, cancel_order
 import inspect
 
 
@@ -70,56 +70,13 @@ lambda context, data: order_target_percent(context.asset, 0.5),
 # Sell & wait
 # lambda context, data: order(context.asset, -1*context.portfolio.positions[context.asset].amount, limit_price=148.5),
 ]
- 
- # Plot start
-    cost_start = context.portfolio.positions[context.asset].cost_basis
-    amt_start = context.portfolio.positions[context.asset].amount
-    open_orders_start = len(get_open_orders(context.asset))
-    txns_start = len(context.perf_tracker.todays_performance.processed_transactions)
-    # Custom plot
+
+
+def handle_data(context, data):
+
+    global test_steps
     
- plot(context, cost_start=cost_start, amt_start=amt_start, open_orders_start=open_orders_start, txns_start=txns_start)
-
- if context.i < len(test_steps):
-        test_steps[context.i](context, data)
-        record(plot_text=inspect.getsource(test_steps[context.i]))
-        
-context.i += 1
-# Plot end
-    # Cancel all open orders
-    for i in open_orders:
-        cancel_order(i)
-
-test_steps = [
-# Place limit order at price that should not fill it
-lambda context, data: order(context.asset, 0.11, limit_price=100),
-# Cancel hanging order
-lambda context, data: cancel_all_orders(context, data),
-# Fill buy order
-lambda context, data: order(context.asset, 0.11, limit_price=200),
-# Sell at ridiculous price, results in hanging order
-lambda context, data: order(context.asset, -1*context.portfolio.positions[context.asset].amount, limit_price=200),
-# Cancel hanging order
-lambda context, data: cancel_all_orders(context, data),
-# Sell at a limit price where it will fill
-lambda context, data: order(context.asset, -1*context.portfolio.positions[context.asset].amount, limit_price=100),
-# Should buy 70% of portfolio
-lambda context, data: order_target_percent(context.asset, 0.7),
-# Nothing to cancel, so should do nothing and continue
-lambda context, data: cancel_all_orders(context, data),
-# Should sell a bit
-lambda context, data: order_target_percent(context.asset, 0.3),
-# Sell the rest
-lambda context, data: order_target_percent(context.asset, 0),
-# Get 50/50 to place a buy and sell snipe
-lambda context, data: order_target_percent(context.asset, 0.5),
-# Buy & wait
-# lambda context, data: order(context.asset, 0.11, limit_price=144),
-# Sell & wait
-# lambda context, data: order(context.asset, -1*context.portfolio.positions[context.asset].amount, limit_price=148.5),
-]
-
-# Plot start
+    # Plot start
     cost_start = context.portfolio.positions[context.asset].cost_basis
     amt_start = context.portfolio.positions[context.asset].amount
     open_orders_start = len(get_open_orders(context.asset))
@@ -134,45 +91,11 @@ lambda context, data: order_target_percent(context.asset, 0.5),
     context.i += 1
         
     # Plot end
-    # Cancel all open orders
-    for i in open_orders:
-        cancel_order(i)
-
-
-test_steps = [
-# Place limit order at price that should not fill it
-lambda context, data: order(context.asset, 0.11, limit_price=100),
-# Cancel hanging order
-lambda context, data: cancel_all_orders(context, data),
-# Fill buy order
-lambda context, data: order(context.asset, 0.11, limit_price=200),
-# Sell at ridiculous price, results in hanging order
-lambda context, data: order(context.asset, -1*context.portfolio.positions[context.asset].amount, limit_price=200),
-# Cancel hanging order
-lambda context, data: cancel_all_orders(context, data),
-# Sell at a limit price where it will fill
-lambda context, data: order(context.asset, -1*context.portfolio.positions[context.asset].amount, limit_price=100),
-# Should buy 70% of portfolio
-lambda context, data: order_target_percent(context.asset, 0.7),
-# Nothing to cancel, so should do nothing and continue
-lambda context, data: cancel_all_orders(context, data),
-# Should sell a bit
-lambda context, data: order_target_percent(context.asset, 0.3),
-# Sell the rest
-
-lambda context, data: order_target_percent(context.asset, 0),
-# Get 50/50 to place a buy and sell snipe
-lambda context, data: order_target_percent(context.asset, 0.5),
-# Buy & wait
-# lambda context, data: order(context.asset, 0.11, limit_price=144),
-# Sell & wait
-# lambda context, data: order(context.asset, -1*context.portfolio.positions[context.asset].amount, limit_price=148.5),
-]
-
-
     cost_end = context.portfolio.positions[context.asset].cost_basis
     amt_end = context.portfolio.positions[context.asset].amount
     open_orders_end = len(get_open_orders(context.asset))
-    txns_end = len(context.perf_tracker.todays
+    txns_end = len(context.perf_tracker.todays_performance.processed_transactions)
+    # Custom plot
+    plot(context, cost_end=cost_end, amt_end=amt_end, open_orders_end=open_orders_end, txns_end=txns_end)
     
     
